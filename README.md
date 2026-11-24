@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 93Kerala – digital news portal (frontend demo)
 
-## Getting Started
+Bilingual (Malayalam / English) news portal frontend for 93Kerala, Manjeri. **Frontend only:** every story, video, ad and dashboard figure is fictional sample data from `data/`. There is no database, CMS, auth, ad tracking or live-stream detection yet.
 
-First, run the development server:
+Next.js 16 (App Router, Cache Components, Partial Prefetching) · React 19 · TypeScript · Tailwind CSS 4.
+
+## Run it
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev                      # http://localhost:3000
+npm run build && npm run start   # production build (use this for demos)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The first build needs internet access to download the Google fonts. Images are local (`public/images`), so a demo needs no network except for the YouTube player.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Route | Page |
+|---|---|
+| `/` | Homepage |
+| `/news/[slug]` | Article |
+| `/category/[slug]`, `/district/[slug]` | Section pages (e.g. `/category/politics`, `/district/manjeri`) |
+| `/videos`, `/live` | Video news, YouTube live (demo embed) |
+| `/search?q=` | Search |
+| `/about`, `/advertise`, `/contact`, `/privacy`, `/terms` | Info pages |
+| `/admin` | Admin dashboard preview (visual demo, no auth) |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Configuration
 
-## Learn More
+| Setting | Where |
+|---|---|
+| YouTube live embed | `NEXT_PUBLIC_YOUTUBE_LIVE_EMBED_URL`, e.g. `https://www.youtube.com/embed/live_stream?channel=<CHANNEL_ID>`. Default is YouTube's own embed demo video. |
+| Absolute site URL (Open Graph images) | `NEXT_PUBLIC_SITE_URL` |
+| Social links, contact details, weather text | `data/site.ts` (values marked `TODO` are placeholders) |
 
-To learn more about Next.js, take a look at the following resources:
+## How it is organised
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+app/(public)/     public pages (shared header, ticker, footer, mobile sticky ad)
+app/admin/        dashboard preview with its own layout
+components/       layout, news, ads, videos, admin, common
+data/             all demo content: news, categories, videos, advertisements, admin, pages, site
+lib/news.ts       read helpers over data/ (swap these for API calls)
+types/index.ts    shared types (Article, Ad, Video, Section, Text)
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+**Bilingual text.** Every text field is `{ ml, en? }` (`Text` type), which maps to `*_ml` / `*_en` columns. Both languages are rendered and CSS shows one, based on `<html data-lang>`. An inline script applies the saved choice before first paint, so pages stay fully static and the choice survives navigation. When `en` is missing, Malayalam shows in both modes. Article pages say so in English mode rather than machine-translate.
 
-## Deploy on Vercel
+**Ads.** `data/advertisements.ts` holds one creative per placement (`HEADER_LEADERBOARD`, `HOME_SIDEBAR`, `HOME_INFEED_1/2`, `ARTICLE_TOP/MIDDLE/BOTTOM`, `MOBILE_STICKY`, `SIDEBAR`). `components/ads/Ad.tsx` renders it in the placement's IAB format and sizes it by slot width (container queries). A creative without `headline` renders as a plain image banner, so uploaded banner images also work. To connect an ad server, replace the `ADS` array with the API response; the shape stays the same.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**Rendering.** All article, section and info pages are prerendered (`generateStaticParams`). Only search results and section pagination (`?page=`) render per request, behind `<Suspense>`. Unknown article and info-page URLs return a real 404 (`ensureStatic = "navigation"`).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**Times.** Demo stories store `minutesAgo` so they always look current. The CMS will return `publishedAt` timestamps; update `timeAgo()` in `lib/utils.ts` and `LocalTime` to take a date.
+
+## Needs backend integration
+
+- CMS / database for articles, categories, authors, media, with an editorial workflow (draft → review → publish)
+- Admin authentication, roles and every admin action (create/edit, approvals, media library, settings)
+- Ad server: campaigns, scheduling, rotation, impression and click tracking, reporting
+- Analytics (the dashboard figures are static samples)
+- YouTube Data API for the video list, and the real channel / live-stream URL
+- Weather API (utility bar shows a fixed placeholder)
+- Search backend (currently substring match over demo data)
+- Sitemap, RSS and structured data once real URLs exist; contact form or newsletter if wanted
+- Real contact details, social URLs, privacy policy and terms
+
+## Demo media
+
+Stock photos are placeholders to be replaced with newsroom photography. They come from Unsplash (Unsplash License) and from CC0 / public-domain photos found via Openverse (WordPress Photo Directory, Flickr), per their license metadata. Fictional stories use them captioned "പ്രതീകാത്മക ചിത്രം / Representative image". Ad brands (Ponnolam, KadaFresh, Voltra, etc.) are invented.
