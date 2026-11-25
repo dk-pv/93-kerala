@@ -19,7 +19,7 @@ function setLang(lang: Lang) {
   window.dispatchEvent(new Event("langchange"));
 }
 
-export function useLang() {
+function useLang() {
   return useSyncExternalStore(subscribe, current, () => "ml" as Lang);
 }
 

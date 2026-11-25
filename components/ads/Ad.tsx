@@ -96,7 +96,7 @@ function Creative({ ad, format }: { ad: AdType; format: AdFormat }) {
               {brand()}
               {headline("line-clamp-2 text-sm @2xl:text-lg")}
             </div>
-            {cta("hidden shrink-0 px-4 py-2 text-xs @md:inline-flex")}
+            {cta("shrink-0 px-4 py-2 text-xs @max-md:hidden")}
           </div>
         </div>
       );

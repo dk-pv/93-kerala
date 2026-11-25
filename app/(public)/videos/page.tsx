@@ -10,7 +10,11 @@ import VideoPlayer from "@/components/videos/VideoPlayer";
 import { SITE } from "@/data/site";
 import { VIDEOS } from "@/data/videos";
 
-export const metadata: Metadata = { title: "വീഡിയോ | Videos" };
+export const metadata: Metadata = {
+  title: "വീഡിയോ | Videos",
+  description: "News videos, interviews and live coverage from Malappuram and across Kerala.",
+  alternates: { canonical: "/videos" },
+};
 
 export default function VideosPage() {
   const [featured, ...rest] = VIDEOS;

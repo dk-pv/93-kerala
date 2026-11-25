@@ -9,10 +9,7 @@ import type { Video } from "@/types";
 export function LiveBadge({ className = "" }: { className?: string }) {
   return (
     <span className={`inline-flex items-center gap-1.5 bg-brand px-2 py-0.5 text-[11px] font-extrabold tracking-wider text-white ${className}`}>
-      <span className="relative flex size-2">
-        <span className="absolute inline-flex size-full animate-ping rounded-full bg-white opacity-75 motion-reduce:hidden" />
-        <span className="relative inline-flex size-2 rounded-full bg-white" />
-      </span>
+      <span aria-hidden className="size-2 rounded-full bg-white motion-safe:animate-pulse" />
       LIVE
     </span>
   );

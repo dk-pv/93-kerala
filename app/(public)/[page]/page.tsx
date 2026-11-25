@@ -16,8 +16,9 @@ export function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: PageProps<"/[page]">): Promise<Metadata> {
-  const p = PAGES[(await params).page];
-  return p ? { title: `${p.title.ml} | ${p.title.en}`, description: p.intro.en } : {};
+  const slug = (await params).page;
+  const p = PAGES[slug];
+  return p ? { title: `${p.title.ml} | ${p.title.en}`, description: p.intro.en, alternates: { canonical: `/${slug}` } } : {};
 }
 
 const PLACEMENT_INFO: Record<string, { ml: string; en: string }> = {

@@ -44,8 +44,11 @@ html:not([data-lang="en"]) .lang-en {
   letter-spacing: normal;
 }
 
+/* Long Malayalam compounds may break only when a line has no room; unlike `break-word`,
+   `anywhere` also lowers min-content width, so narrow screens (320px) never overflow. */
 body {
   text-rendering: optimizeLegibility;
+  overflow-wrap: anywhere;
 }
 
 /* Malayalam stacks tall glyphs above and below the line; give headings room so clamps don't clip. */
@@ -54,7 +57,6 @@ h2,
 h3,
 h4 {
   line-height: 1.4;
-  overflow-wrap: break-word;
 }
 
 /* Breaking-news ticker: the track holds the headlines twice and slides by half its width. */

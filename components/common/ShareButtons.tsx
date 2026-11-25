@@ -36,7 +36,15 @@ export default function ShareButtons({ title }: { title: string }) {
       ))}
       <button
         type="button"
-        onClick={() => navigator.clipboard?.writeText(location.href).then(() => setCopied(true))}
+        onClick={async () => {
+          try {
+            await navigator.clipboard.writeText(location.href);
+            setCopied(true);
+          } catch {
+            // Clipboard API is missing on non-HTTPS origins (e.g. a LAN demo): let the reader copy by hand.
+            window.prompt("Copy link", location.href);
+          }
+        }}
         aria-label="Copy link"
         className="inline-flex h-9 items-center gap-1.5 rounded-full border border-line bg-white px-3 text-xs font-semibold hover:border-ink"
       >

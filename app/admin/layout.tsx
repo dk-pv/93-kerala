@@ -101,14 +101,6 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             <Link href="/" className="hidden items-center gap-1.5 text-sm font-semibold text-muted hover:text-ink sm:inline-flex">
               View site <Icon name="arrowRight" className="size-3.5" />
             </Link>
-            <button
-              type="button"
-              disabled
-              title="Available after backend integration"
-              className="inline-flex cursor-not-allowed items-center gap-1.5 bg-brand px-3 py-2 text-sm font-bold text-white opacity-60"
-            >
-              <Icon name="plus" className="size-4" /> Create News
-            </button>
             <span title="Demo editor account" className="grid size-9 place-items-center rounded-full bg-ink text-xs font-bold text-white">
               ED
             </span>

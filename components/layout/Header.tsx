@@ -49,18 +49,15 @@ export default function Header() {
         <div className="wrap flex items-center justify-between gap-6 py-3 lg:py-4">
           <Logo className="h-12 w-auto sm:h-14 lg:h-[78px]" preload />
           <Ad placement="HEADER_LEADERBOARD" className="hidden min-w-0 max-w-[728px] flex-1 lg:block" />
-          <div className="hidden shrink-0 flex-col items-end gap-2.5 xl:flex">
-            <Link href="/live" className="inline-flex items-center gap-2 bg-brand px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-brand-dark">
-              <span className="size-2 animate-pulse rounded-full bg-white" />
-              <T ml="തത്സമയം കാണൂ" en="Watch Live" />
-            </Link>
-            <div className="flex items-center gap-2 text-xs text-muted">
-              <T ml="ഫോളോ ചെയ്യൂ" en="Follow us" />
-              <SocialLinks className="text-ink" />
-            </div>
-          </div>
+          <Link
+            href="/live"
+            className="hidden shrink-0 items-center gap-2 bg-brand px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-brand-dark xl:inline-flex"
+          >
+            <span className="size-2 rounded-full bg-white motion-safe:animate-pulse" />
+            <T ml="തത്സമയം കാണൂ" en="Watch Live" />
+          </Link>
           <Link href="/live" className="inline-flex items-center gap-1.5 bg-brand px-3 py-1.5 text-xs font-bold text-white lg:hidden">
-            <span className="size-1.5 animate-pulse rounded-full bg-white" />
+            <span className="size-1.5 rounded-full bg-white motion-safe:animate-pulse" />
             LIVE
           </Link>
         </div>

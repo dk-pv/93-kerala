@@ -11,7 +11,7 @@ import { SECTIONS } from "@/data/categories";
 import { search, trending } from "@/lib/news";
 import { sectionHref } from "@/lib/utils";
 
-export const metadata: Metadata = { title: "തിരയുക | Search" };
+export const metadata: Metadata = { title: "തിരയുക | Search", alternates: { canonical: "/search" } };
 
 const POPULAR = ["മഴ", "മഞ്ചേരി", "കരിപ്പൂർ", "ഫുട്ബോൾ", "KSRTC", "Gulf"];
 
@@ -22,11 +22,33 @@ export default function SearchPage({ searchParams }: PageProps<"/search">) {
       <h1 className="font-display text-3xl font-bold md:text-4xl">
         <T ml="വാർത്തകൾ തിരയുക" en="Search news" />
       </h1>
+      {/* Only the query-dependent parts stream; the grid and sidebar are static, so nothing shifts. */}
       <Suspense fallback={<SearchForm />}>
-        <Results searchParams={searchParams} />
+        <QueryForm searchParams={searchParams} />
       </Suspense>
+      <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
+        <div className="min-w-0">
+          <Suspense fallback={<div className="min-h-80 border border-line bg-white" />}>
+            <Results searchParams={searchParams} />
+          </Suspense>
+        </div>
+        <aside className="border border-line bg-white p-4 md:p-5">
+          <TrendingNews items={trending(6)} />
+        </aside>
+      </div>
     </div>
   );
+}
+
+type SearchParams = PageProps<"/search">["searchParams"];
+
+async function query(searchParams: SearchParams) {
+  const raw = (await searchParams).q;
+  return (Array.isArray(raw) ? raw[0] : (raw ?? "")).trim().slice(0, 100);
+}
+
+async function QueryForm({ searchParams }: { searchParams: SearchParams }) {
+  return <SearchForm q={await query(searchParams)} />;
 }
 
 function SearchForm({ q = "" }: { q?: string }) {
@@ -56,7 +78,11 @@ function Chips({ terms }: { terms: string[] }) {
   return (
     <div className="flex flex-wrap gap-2">
       {terms.map((t) => (
-        <Link key={t} href={`/search?q=${encodeURIComponent(t)}`} className="rounded-full border border-line bg-white px-3 py-1.5 text-sm hover:border-ink">
+        <Link
+          key={t}
+          href={`/search?q=${encodeURIComponent(t)}`}
+          className="rounded-full border border-line bg-white px-3 py-1.5 text-sm hover:border-ink"
+        >
           {t}
         </Link>
       ))}
@@ -64,79 +90,66 @@ function Chips({ terms }: { terms: string[] }) {
   );
 }
 
-async function Results({ searchParams }: { searchParams: PageProps<"/search">["searchParams"] }) {
-  const raw = (await searchParams).q;
-  const q = (Array.isArray(raw) ? raw[0] : raw ?? "").trim().slice(0, 100);
+async function Results({ searchParams }: { searchParams: SearchParams }) {
+  const q = await query(searchParams);
   const { articles, sections } = search(q);
 
-  return (
-    <>
-      <SearchForm q={q} />
-      <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
-        <div className="min-w-0">
-          {!q ? (
-            <div className="space-y-6 border border-line bg-white p-5">
-              <div>
-                <h2 className="mb-3 font-display text-lg font-bold">
-                  <T ml="ജനപ്രിയ തിരച്ചിലുകൾ" en="Popular searches" />
-                </h2>
-                <Chips terms={POPULAR} />
-              </div>
-              <div>
-                <h2 className="mb-3 font-display text-lg font-bold">
-                  <T ml="വിഭാഗങ്ങൾ" en="Browse sections" />
-                </h2>
-                <div className="flex flex-wrap gap-2">
-                  {SECTIONS.map((s) => (
-                    <Link key={s.slug} href={sectionHref(s)} className="bg-ink px-3 py-1.5 text-sm font-semibold text-white hover:bg-brand">
-                      <T {...s.name} />
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            </div>
-          ) : articles.length + sections.length === 0 ? (
-            <div className="border border-line bg-white px-6 py-14 text-center">
-              <Icon name="search" className="mx-auto size-10 text-line" />
-              <p className="mt-4 font-display text-xl font-bold">
-                <T ml={`“${q}” എന്നതിന് ഫലങ്ങളൊന്നും കണ്ടെത്തിയില്ല`} en={`No results for “${q}”`} />
-              </p>
-              <p className="mt-2 text-sm text-muted">
-                <T ml="മറ്റൊരു വാക്ക് ഉപയോഗിച്ച് ശ്രമിക്കൂ, അല്ലെങ്കിൽ ഇവ നോക്കൂ:" en="Try another word, or explore these:" />
-              </p>
-              <div className="mt-5 flex justify-center">
-                <Chips terms={POPULAR} />
-              </div>
-            </div>
-          ) : (
-            <div className="border border-line bg-white p-4 md:p-5">
-              <p className="text-sm text-muted">
-                <T ml={`“${q}” – ${articles.length} വാർത്തകൾ`} en={`${articles.length} stories for “${q}”`} />
-              </p>
-              {sections.length > 0 && (
-                <div className="mt-4 flex flex-wrap items-center gap-2 border-b border-line pb-4">
-                  <span className="text-xs font-bold uppercase tracking-wide text-muted">
-                    <T ml="വിഭാഗങ്ങൾ" en="Sections" />
-                  </span>
-                  {sections.map((s) => (
-                    <Link key={s.slug} href={sectionHref(s)} className="bg-brand px-3 py-1 text-sm font-semibold text-white hover:bg-brand-dark">
-                      <T {...s.name} />
-                    </Link>
-                  ))}
-                </div>
-              )}
-              <div className="divide-y divide-line">
-                {articles.map((a) => (
-                  <NewsCard key={a.slug} a={a} variant="list" summary />
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-        <aside className="border border-line bg-white p-4 md:p-5">
-          <TrendingNews items={trending(6)} />
-        </aside>
+  return !q ? (
+    <div className="space-y-6 border border-line bg-white p-5">
+      <div>
+        <h2 className="mb-3 font-display text-lg font-bold">
+          <T ml="ജനപ്രിയ തിരച്ചിലുകൾ" en="Popular searches" />
+        </h2>
+        <Chips terms={POPULAR} />
       </div>
-    </>
+      <div>
+        <h2 className="mb-3 font-display text-lg font-bold">
+          <T ml="വിഭാഗങ്ങൾ" en="Browse sections" />
+        </h2>
+        <div className="flex flex-wrap gap-2">
+          {SECTIONS.map((s) => (
+            <Link key={s.slug} href={sectionHref(s)} className="bg-ink px-3 py-1.5 text-sm font-semibold text-white hover:bg-brand">
+              <T {...s.name} />
+            </Link>
+          ))}
+        </div>
+      </div>
+    </div>
+  ) : articles.length + sections.length === 0 ? (
+    <div className="border border-line bg-white px-6 py-14 text-center">
+      <Icon name="search" className="mx-auto size-10 text-line" />
+      <p className="mt-4 font-display text-xl font-bold">
+        <T ml={`“${q}” എന്നതിന് ഫലങ്ങളൊന്നും കണ്ടെത്തിയില്ല`} en={`No results for “${q}”`} />
+      </p>
+      <p className="mt-2 text-sm text-muted">
+        <T ml="മറ്റൊരു വാക്ക് ഉപയോഗിച്ച് ശ്രമിക്കൂ, അല്ലെങ്കിൽ ഇവ നോക്കൂ:" en="Try another word, or explore these:" />
+      </p>
+      <div className="mt-5 flex justify-center">
+        <Chips terms={POPULAR} />
+      </div>
+    </div>
+  ) : (
+    <div className="border border-line bg-white p-4 md:p-5">
+      <p className="text-sm text-muted">
+        <T ml={`“${q}” – ${articles.length} വാർത്തകൾ`} en={`${articles.length} stories for “${q}”`} />
+      </p>
+      {sections.length > 0 && (
+        <div className="mt-4 flex flex-wrap items-center gap-2 border-b border-line pb-4">
+          <span className="text-xs font-bold uppercase tracking-wide text-muted">
+            <T ml="വിഭാഗങ്ങൾ" en="Sections" />
+          </span>
+          {sections.map((s) => (
+            <Link key={s.slug} href={sectionHref(s)} className="bg-brand px-3 py-1 text-sm font-semibold text-white hover:bg-brand-dark">
+              <T {...s.name} />
+            </Link>
+          ))}
+        </div>
+      )}
+      <div className="divide-y divide-line">
+        {articles.map((a) => (
+          <NewsCard key={a.slug} a={a} variant="list" summary />
+        ))}
+      </div>
+    </div>
   );
 }

@@ -14,6 +14,9 @@ export const metadata: Metadata = {
   },
   description:
     "Malayalam and English news from Manjeri, Malappuram, Kerala, India and the world – 93Kerala digital news network.",
+  // Pages that set their own openGraph replace this object, so they repeat siteName.
+  openGraph: { siteName: "93Kerala", type: "website", locale: "ml_IN", images: ["/images/placeholder.jpg"] },
+  twitter: { card: "summary_large_image" },
 };
 
 export const viewport: Viewport = { themeColor: "#171717" };

@@ -32,7 +32,8 @@ export async function generateMetadata({ params }: PageProps<"/news/[slug]">): P
   return {
     title: a.title.ml,
     description: a.summary.ml,
-    openGraph: { type: "article", title: a.title.ml, description: a.summary.ml, images: [a.image] },
+    alternates: { canonical: `/news/${a.slug}` },
+    openGraph: { type: "article", siteName: "93Kerala", title: a.title.ml, description: a.summary.ml, images: [a.image] },
   };
 }
 
@@ -71,7 +72,7 @@ export default async function ArticlePage({ params }: PageProps<"/news/[slug]">)
                 </Link>
               )}
             </div>
-            <h1 className="mt-3 font-display text-[1.7rem] font-bold leading-[1.35] md:text-[2.4rem]">
+            <h1 className="mt-3 font-display text-[clamp(1.5rem,1.1rem+2.2vw,2.4rem)] font-bold leading-[1.35]">
               <T {...a.title} />
             </h1>
             {a.title.en && (

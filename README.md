@@ -29,7 +29,8 @@ The first build needs internet access to download the Google fonts. Images are l
 | Setting | Where |
 |---|---|
 | YouTube live embed | `NEXT_PUBLIC_YOUTUBE_LIVE_EMBED_URL`, e.g. `https://www.youtube.com/embed/live_stream?channel=<CHANNEL_ID>`. Default is YouTube's own embed demo video. |
-| Absolute site URL (Open Graph images) | `NEXT_PUBLIC_SITE_URL` |
+| Absolute site URL (canonical links, Open Graph, sitemap) | `NEXT_PUBLIC_SITE_URL` |
+| Search-engine indexing | `NEXT_PUBLIC_ALLOW_INDEXING=true`. Off by default, so `robots.txt` blocks crawlers while the site holds fictional demo stories. |
 | Social links, contact details, weather text | `data/site.ts` (values marked `TODO` are placeholders) |
 
 ## How it is organised
@@ -47,7 +48,7 @@ types/index.ts    shared types (Article, Ad, Video, Section, Text)
 
 **Ads.** `data/advertisements.ts` holds one creative per placement (`HEADER_LEADERBOARD`, `HOME_SIDEBAR`, `HOME_INFEED_1/2`, `ARTICLE_TOP/MIDDLE/BOTTOM`, `MOBILE_STICKY`, `SIDEBAR`). `components/ads/Ad.tsx` renders it in the placement's IAB format and sizes it by slot width (container queries). A creative without `headline` renders as a plain image banner, so uploaded banner images also work. To connect an ad server, replace the `ADS` array with the API response; the shape stays the same.
 
-**Rendering.** All article, section and info pages are prerendered (`generateStaticParams`). Only search results and section pagination (`?page=`) render per request, behind `<Suspense>`. Unknown article and info-page URLs return a real 404 (`ensureStatic = "navigation"`).
+**Rendering.** All article, section and info pages are prerendered (`generateStaticParams`). Only search results and section pagination (`?page=`) render per request, behind `<Suspense>`. Unknown URLs return a real 404: article and info pages via `ensureStatic = "navigation"`, section pages via `proxy.ts` (their streamed list would otherwise start a 200 response first).
 
 **Times.** Demo stories store `minutesAgo` so they always look current. The CMS will return `publishedAt` timestamps; update `timeAgo()` in `lib/utils.ts` and `LocalTime` to take a date.
 
@@ -60,7 +61,7 @@ types/index.ts    shared types (Article, Ad, Video, Section, Text)
 - YouTube Data API for the video list, and the real channel / live-stream URL
 - Weather API (utility bar shows a fixed placeholder)
 - Search backend (currently substring match over demo data)
-- Sitemap, RSS and structured data once real URLs exist; contact form or newsletter if wanted
+- RSS, structured data (NewsArticle) and a sitemap fed by the CMS; contact form or newsletter if wanted
 - Real contact details, social URLs, privacy policy and terms
 
 ## Demo media

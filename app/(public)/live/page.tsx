@@ -13,7 +13,11 @@ import { SITE } from "@/data/site";
 import { VIDEOS } from "@/data/videos";
 import { latest } from "@/lib/news";
 
-export const metadata: Metadata = { title: "93Kerala Live | തത്സമയം" };
+export const metadata: Metadata = {
+  title: "93Kerala Live | തത്സമയം",
+  description: "Watch 93Kerala's live news broadcast.",
+  alternates: { canonical: "/live" },
+};
 
 export default function LivePage() {
   const live = VIDEOS.find((v) => v.live) ?? VIDEOS[0];

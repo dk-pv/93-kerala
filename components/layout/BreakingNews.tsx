@@ -32,10 +32,7 @@ export default function BreakingNews({ items }: { items: { text: Text; slug: str
     <div className="border-b border-line bg-white">
       <div className="wrap flex h-11 items-center gap-3">
         <span className="flex shrink-0 items-center gap-2 bg-brand px-2.5 py-1.5 text-xs font-extrabold uppercase tracking-wide text-white">
-          <span className="relative flex size-2">
-            <span className="absolute inline-flex size-full animate-ping rounded-full bg-white opacity-75 motion-reduce:hidden" />
-            <span className="relative inline-flex size-2 rounded-full bg-white" />
-          </span>
+          <span aria-hidden className="size-2 rounded-full bg-white" />
           <span className="sm:hidden">
             <T ml="ബ്രേക്കിങ്" en="Breaking" />
           </span>

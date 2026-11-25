@@ -12,7 +12,9 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: PageProps<"/district/[slug]">): Promise<Metadata> {
   const s = getSection((await params).slug);
-  return s ? { title: `${s.name.ml} വാർത്തകൾ | ${s.name.en} News`, description: s.description.en } : {};
+  return s
+    ? { title: `${s.name.ml} വാർത്തകൾ | ${s.name.en} News`, description: s.description.en, alternates: { canonical: `/district/${s.slug}` } }
+    : {};
 }
 
 export default async function DistrictPage({ params, searchParams }: PageProps<"/district/[slug]">) {

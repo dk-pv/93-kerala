@@ -94,7 +94,7 @@ export default function NewsCard({
           <Photo a={a} preload={preload} sizes={sizes ?? "(min-width: 1024px) 640px, 100vw"} className="aspect-[16/9]" />
           <div className="mt-4">
             {badge && <CategoryBadge slug={a.category} />}
-            <Title a={a} className="mt-2 text-2xl leading-[1.35] md:text-[2rem]" />
+            <Title a={a} className="mt-2 text-[clamp(1.375rem,1rem+1.6vw,2rem)] leading-[1.35]" />
             <p className="mt-3 line-clamp-3 text-[15px] leading-relaxed text-ink/75">
               <T {...a.summary} />
             </p>

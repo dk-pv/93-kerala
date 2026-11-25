@@ -11,7 +11,10 @@ import VideoPlayer from "@/components/videos/VideoPlayer";
 import { SITE } from "@/data/site";
 import { VIDEOS } from "@/data/videos";
 import { featured, inSection, latest, trending } from "@/lib/news";
+import type { Metadata } from "next";
 import type { Article, Text } from "@/types";
+
+export const metadata: Metadata = { alternates: { canonical: "/" } };
 
 const panel = "border border-line bg-white p-4 md:p-5";
 
@@ -42,6 +45,10 @@ export default function HomePage() {
 
   return (
     <>
+      <h1 className="sr-only">
+        <T ml="93കേരള – മലപ്പുറത്തിന്റെ വാർത്താ ശൃംഖല" en="93Kerala – Malappuram's News Network" />
+      </h1>
+
       {/* 1 · Featured */}
       <section className="wrap pt-6" aria-label="Top stories">
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1.55fr)_minmax(0,1fr)] xl:grid-cols-[minmax(0,1.55fr)_minmax(0,1fr)_300px]">
@@ -93,7 +100,7 @@ export default function HomePage() {
         <div className={panel}>
           <SectionHeading title={{ ml: "ഏറ്റവും പുതിയ വാർത്തകൾ", en: "Latest News" }} eyebrow={{ ml: "ഇപ്പോൾ", en: "Just in" }} />
           <div className="divide-y divide-line">
-            {latest(8).map((a) => (
+            {fresh(latest()).slice(0, 8).map((a) => (
               <NewsCard key={a.slug} a={a} variant="list" summary />
             ))}
           </div>

@@ -19,11 +19,11 @@ export default function NavLinks() {
             <Link
               href={item.href}
               aria-current={active ? "page" : undefined}
-              className={`relative flex h-12 items-center gap-1.5 px-2.5 text-sm font-semibold transition-colors hover:text-white xl:px-3 xl:text-[15px] ${
-                active ? "text-white after:absolute after:inset-x-2 after:bottom-0 after:h-[3px] after:bg-brand" : "text-white/75"
+              className={`relative flex h-12 items-center gap-1.5 px-2.5 text-sm font-semibold transition-colors hover:text-white lg:px-1.5 xl:px-3 xl:text-[15px] ${
+                active ? "text-white after:absolute after:inset-x-1.5 after:bottom-0 after:h-[3px] after:bg-brand" : "text-white/75"
               }`}
             >
-              {item.href === "/live" && <span aria-hidden className="size-2 animate-pulse rounded-full bg-brand" />}
+              {item.href === "/live" && <span aria-hidden className="size-2 rounded-full bg-brand motion-safe:animate-pulse" />}
               {home ? (
                 <>
                   <Icon name="home" className="size-[18px]" />
